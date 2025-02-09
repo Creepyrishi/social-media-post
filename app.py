@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, send_from_directory
 from datetime import datetime
 
 app = Flask(__name__)
@@ -32,5 +32,14 @@ def contact():
 def privacy():
     return render_template('privacy.html', current_year=datetime.now().year)
 
+@app.route('/robots.txt')
+def robots():
+    return send_from_directory(app.root_path, 'robots.txt')
+
+@app.route('/sitemap.xml')
+def sitemap():
+    return send_from_directory(app.root_path, 'sitemap.xml')
+
 if __name__ == '__main__':
     app.run(debug=True)
+

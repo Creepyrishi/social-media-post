@@ -1,0 +1,220 @@
+{% extends "base.html" %}
+
+{% block title %}X (Twitter) Template - Social Media Templates{% endblock %}
+
+{% block header_title %}Customize Your X (Twitter) Post{% endblock %}
+{% block header_subtitle %}Create the perfect post by customizing each element to match your brand{% endblock %}
+
+{% block content %}
+<div class="container" x-data="{
+  aspectRatio: 'custom',
+  mainText: 'Enter your post content here...',
+  displayName: 'Elon Musk',
+  handle: '@elonmusk',
+  mainImage: '',
+  profileImage: '',
+  darkMode: true,
+  verified: true,
+  previewWidth: 600
+}">
+  <div class="row">
+    <!-- Controls Panel -->
+    <div class="col-md-4">
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Customize Your Post</h5>
+          
+          <!-- Aspect Ratio Selection -->
+          <div class="mb-3">
+            <label class="form-label">Aspect Ratio</label>
+            <select class="form-select" x-model="aspectRatio">
+              <option value="16:9">16:9</option>
+              <option value="1:1">1:1</option>
+              <option value="4:5">4:5</option>
+              <option value="custom">Custom</option>
+            </select>
+          </div>
+
+          <!-- Width Control (only shown for custom aspect ratio) -->
+          <div class="mb-3" x-show="aspectRatio === 'custom'">
+            <label class="form-label">Preview Width (px)</label>
+            <input type="range" class="form-range" min="300" max="800" step="10" x-model="previewWidth">
+            <div class="text-muted small text-center" x-text="previewWidth + 'px'"></div>
+          </div>
+
+          <!-- Text Content -->
+          <div class="mb-3">
+            <label class="form-label">Post Content</label>
+            <textarea class="form-control" rows="4" x-model="mainText"></textarea>
+          </div>
+
+          <!-- User Details -->
+          <div class="mb-3">
+            <label class="form-label">Display Name</label>
+            <input type="text" class="form-control" x-model="displayName">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">X Handle</label>
+            <input type="text" class="form-control" x-model="handle">
+          </div>
+
+          <!-- Image Uploads -->
+          <div class="mb-3">
+            <label class="form-label">Main Image</label>
+            <input type="file" class="form-control" @change="mainImage = URL.createObjectURL($event.target.files[0])">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Profile Picture</label>
+            <input type="file" class="form-control" @change="profileImage = URL.createObjectURL($event.target.files[0])">
+          </div>
+
+          <!-- Theme Toggle -->
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" x-model="darkMode">
+            <label class="form-check-label">Dark Mode</label>
+          </div>
+
+          <!-- Verified Toggle -->
+          <div class="form-check form-switch mt-2">
+            <input class="form-check-input" type="checkbox" x-model="verified">
+            <label class="form-check-label">Verified Account</label>
+          </div>
+
+          <!-- Download Buttons -->
+          <div class="mt-4">
+            <h6>Download Options</h6>
+            <div class="d-grid gap-2">
+              <button class="btn btn-primary" onclick="downloadPost('high')">
+                <i class="fas fa-download me-2"></i>Download High Quality
+              </button>
+              <button class="btn btn-outline-primary" onclick="downloadPost('ultra')">
+                <i class="fas fa-download me-2"></i>Download Ultra Quality
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preview Panel -->
+    <div class="col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Preview</h5>
+          
+          <!-- Post Preview -->
+          <div class="twitter-post-preview" 
+               :class="{ 'dark-mode': darkMode }"
+               :style="{ 
+                 'aspect-ratio': aspectRatio !== 'custom' ? aspectRatio.replace(':', '/') : 'auto',
+                 'width': aspectRatio === 'custom' ? previewWidth + 'px' : '100%'
+               }">
+            <div class="post-header d-flex align-items-center mb-3">
+              <div class="profile-image-container me-3">
+                <img :src="profileImage || '{{ url_for('static', filename='images/elon_X.jpg') }}'" 
+                     class="rounded-circle" 
+                     width="48" 
+                     height="48" 
+                     alt="Profile picture">
+              </div>
+              <div class="user-info">
+                <div class="display-name fw-bold d-flex align-items-center">
+                  <span x-text="displayName"></span>
+                  <i class="fas fa-check-circle ms-1 text-primary" x-show="verified"></i>
+                </div>
+                <div class="handle" :class="{ 'text-muted': !darkMode, 'text-secondary': darkMode }" x-text="handle"></div>
+              </div>
+            </div>
+
+            <div class="post-content mb-3">
+              <p x-text="mainText"></p>
+              <div class="main-image-container" x-show="mainImage">
+                <img :src="mainImage" class="img-fluid rounded" alt="Post image">
+              </div>
+            </div>
+
+            <!-- Post Actions (static for preview) -->
+            <div class="post-actions d-flex justify-content-between" :class="{ 'text-muted': !darkMode, 'text-secondary': darkMode }">
+              <span><i class="fas fa-comment"></i> Reply</span>
+              <span><i class="fas fa-retweet"></i> Repost</span>
+              <span><i class="fas fa-heart"></i> Like</span>
+              <span><i class="fas fa-bookmark"></i> Save</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.twitter-post-preview {
+  background: var(--bs-white);
+  border: 1px solid var(--bs-gray-200);
+  border-radius: 12px;
+  padding: 1rem;
+  transition: all 0.3s ease;
+  margin: 0 auto;
+}
+
+.twitter-post-preview.dark-mode {
+  background: #15202B;
+  color: var(--bs-white);
+  border-color: #38444D;
+}
+
+.profile-image-container img {
+  object-fit: cover;
+}
+
+.main-image-container {
+  margin-top: 1rem;
+}
+
+.post-actions {
+  padding-top: 1rem;
+  border-top: 1px solid var(--bs-gray-200);
+}
+
+.dark-mode .post-actions {
+  border-top-color: #38444D;
+}
+</style>
+
+<script>
+function downloadPost(quality) {
+  // Get the preview element
+  const previewElement = document.querySelector('.twitter-post-preview');
+  
+  // Use html2canvas to capture the preview as an image
+  html2canvas(previewElement).then(canvas => {
+    // Get quality settings
+    const settings = qualitySettings[quality];
+    
+    // Scale canvas based on desired width while maintaining aspect ratio
+    const scaledCanvas = document.createElement('canvas');
+    const ctx = scaledCanvas.getContext('2d');
+    const scaleFactor = settings.width / canvas.width;
+    scaledCanvas.width = settings.width;
+    scaledCanvas.height = canvas.height * scaleFactor;
+    ctx.drawImage(canvas, 0, 0, scaledCanvas.width, scaledCanvas.height);
+    
+    // Convert to image and trigger download
+    const link = document.createElement('a');
+    link.download = `twitter-post.${settings.format}`;
+    link.href = scaledCanvas.toDataURL(`image/${settings.format}`);
+    link.click();
+  });
+  
+  const qualitySettings = {
+    high: { width: 1920, format: 'png' },
+    ultra: { width: 3840, format: 'png' }
+  };
+  
+  alert(`Downloading post in ${quality} quality...`);
+  // Implement actual download functionality here
+}
+</script>
+{% endblock %}

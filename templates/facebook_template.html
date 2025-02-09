@@ -1,0 +1,262 @@
+{% extends "base.html" %}
+
+{% block title %}Facebook Template - Social Media Templates{% endblock %}
+
+{% block header_title %}Customize Your Facebook Post{% endblock %}
+{% block header_subtitle %}Create engaging Facebook posts by customizing each element{% endblock %}
+
+{% block content %}
+<div class="container" x-data="{
+  aspectRatio: 'custom',
+  mainText: 'Enter your post content here...',
+  username: 'Mark Zuckerberg',
+  location: 'Menlo Park, California',
+  mainImage: '',
+  profileImage: '',
+  imageScale: 1,
+  imageX: 0,
+  imageY: 0,
+  darkMode: false,
+  verified: true,
+  previewWidth: 600
+}">
+  <div class="row">
+    <!-- Controls Panel -->
+    <div class="col-md-4">
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Customize Your Post</h5>
+          
+          <!-- Aspect Ratio Selection -->
+          <div class="mb-3">
+            <label class="form-label">Aspect Ratio</label>
+            <select class="form-select" x-model="aspectRatio">
+              <option value="custom">Custom</option>
+              <option value="16:9">16:9</option>
+              <option value="1:1">1:1</option>
+              <option value="4:5">4:5</option>
+            </select>
+          </div>
+
+          <!-- Width Control (only shown for custom aspect ratio) -->
+          <div class="mb-3" x-show="aspectRatio === 'custom'">
+            <label class="form-label">Preview Width (px)</label>
+            <input type="range" class="form-range" min="300" max="800" step="10" x-model="previewWidth">
+            <div class="text-muted small text-center" x-text="previewWidth + 'px'"></div>
+          </div>
+
+          <!-- Text Content -->
+          <div class="mb-3">
+            <label class="form-label">Post Content</label>
+            <textarea class="form-control" rows="4" x-model="mainText"></textarea>
+          </div>
+
+          <!-- User Details -->
+          <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input type="text" class="form-control" x-model="username">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Location</label>
+            <input type="text" class="form-control" x-model="location">
+          </div>
+
+          <!-- Image Uploads -->
+          <div class="mb-3">
+            <label class="form-label">Main Image</label>
+            <div class="d-flex gap-2">
+              <input type="file" class="form-control" @change="mainImage = URL.createObjectURL($event.target.files[0]); imageScale = 1; imageX = 0; imageY = 0;">
+              <button class="btn btn-danger" @click="mainImage = ''" x-show="mainImage">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Profile Picture</label>
+            <div class="d-flex gap-2">
+              <input type="file" class="form-control" @change="profileImage = URL.createObjectURL($event.target.files[0])">
+              <button class="btn btn-danger" @click="profileImage = ''" x-show="profileImage">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Theme Toggle -->
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" x-model="darkMode">
+            <label class="form-check-label">Dark Mode</label>
+          </div>
+
+          <!-- Verified Toggle -->
+          <div class="form-check form-switch mt-2">
+            <input class="form-check-input" type="checkbox" x-model="verified">
+            <label class="form-check-label">Verified Account</label>
+          </div>
+
+          <!-- Download Buttons -->
+          <div class="mt-4">
+            <h6>Download Options</h6>
+            <div class="d-grid gap-2">
+              <button class="btn btn-outline-secondary position-relative" 
+                      onclick="checkAndDownload('preview')">
+                <i class="fas fa-download me-2"></i>Download Preview Size
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success" style="font-size: 0.7em;">
+                  Recommended
+                  <span class="visually-hidden">recommended option</span>
+                </span>
+              </button>
+              <button class="btn btn-outline-primary" 
+                      onclick="checkAndDownload('ultra')">
+                <i class="fas fa-download me-2"></i>Download Ultra Quality
+              </button>
+              <button class="btn btn-primary" 
+                      onclick="checkAndDownload('high')">
+                <i class="fas fa-download me-2"></i>Download Facebook Size
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preview Panel -->
+    <div class="col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Preview</h5>
+          
+          <!-- Post Preview -->
+          <div class="facebook-post-preview" 
+               :class="{ 'dark-mode': darkMode }"
+               :style="{ 
+                 'aspect-ratio': aspectRatio !== 'custom' ? aspectRatio.replace(':', '/') : 'auto',
+                 'width': previewWidth + 'px'
+               }">
+            <!-- Post Header -->
+            <div class="post-header d-flex align-items-center p-2">
+              <div class="profile-image-container me-3">
+                <img :src="profileImage || '{{ url_for('static', filename='images/mark_Z.jpg') }}'" 
+                     class="rounded-circle" 
+                     width="40" 
+                     height="40" 
+                     alt="Profile picture">
+              </div>
+              <div class="user-info flex-grow-1">
+                <div class="username fw-bold d-flex align-items-center">
+                  <span x-text="username"></span>
+                  <i class="fas fa-check-circle ms-1 text-primary" x-show="verified"></i>
+                </div>
+                <div class="location small" x-text="location"></div>
+              </div>
+              <div class="more-options">
+                <i class="fas fa-ellipsis-h"></i>
+              </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="post-content">
+              <p class="px-2" x-text="mainText"></p>
+              <div class="main-image-container position-relative" x-show="mainImage">
+                <img :src="mainImage" class="img-fluid" alt="Post image">
+              </div>
+            </div>
+
+            <!-- Post Actions -->
+            <div class="post-actions">
+              <div class="d-flex justify-content-between border-top border-bottom py-1">
+                <button class="btn btn-link text-decoration-none"><i class="far fa-thumbs-up"></i> Like</button>
+                <button class="btn btn-link text-decoration-none"><i class="far fa-comment"></i> Comment</button>
+                <button class="btn btn-link text-decoration-none"><i class="fas fa-share"></i> Share</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.facebook-post-preview {
+  background: var(--bs-white);
+  border: 1px solid var(--bs-gray-200);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  margin: 0 auto;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.facebook-post-preview.dark-mode {
+  background: #18191A;
+  color: var(--bs-white);
+  border-color: #38444D;
+}
+
+.profile-image-container img {
+  object-fit: cover;
+}
+
+.main-image-container img {
+  width: 100%;
+  height: auto;
+}
+
+.post-content {
+  flex: 1;
+}
+
+.post-actions {
+  margin-top: auto;
+}
+
+.post-actions button {
+  color: var(--bs-gray-600);
+  flex: 1;
+  text-align: center;
+}
+
+.dark-mode .post-actions button {
+  color: var(--bs-gray-400);
+}
+
+.post-actions button:hover {
+  background-color: var(--bs-gray-100);
+}
+
+.dark-mode .post-actions button:hover {
+  background-color: #242526;
+}
+</style>
+
+<script>
+function checkAndDownload(quality) {
+  const previewElement = document.querySelector('.facebook-post-preview');
+  
+  html2canvas(previewElement).then(canvas => {
+    const qualitySettings = {
+      preview: { width: 1200, format: 'jpg' },
+      high: { width: 1920, format: 'png' },
+      ultra: { width: 3840, format: 'png' }
+    };
+    
+    const settings = qualitySettings[quality];
+    
+    const scaledCanvas = document.createElement('canvas');
+    const ctx = scaledCanvas.getContext('2d');
+    const scaleFactor = settings.width / canvas.width;
+    scaledCanvas.width = settings.width;
+    scaledCanvas.height = canvas.height * scaleFactor;
+    ctx.drawImage(canvas, 0, 0, scaledCanvas.width, scaledCanvas.height);
+    
+    const link = document.createElement('a');
+    link.download = `facebook-post.${settings.format}`;
+    link.href = scaledCanvas.toDataURL(`image/${settings.format}`);
+    link.click();
+  });
+}
+</script>
+{% endblock %}

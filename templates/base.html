@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Basic Meta Tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Create and download professional social media templates easily. Customize templates for Twitter, Instagram, and more.">
+    <meta name="keywords" content="social media templates, Twitter template, Instagram template, download templates, customizable templates">
+    <meta name="author" content="Your Company Name">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph Meta Tags for Social Sharing -->
+    <meta property="og:title" content="{% block og_title %}Your Site Title{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Create and download customizable social media templates quickly and easily.{% endblock %}">
+    <meta property="og:image" content="{{ url_for('static', filename='images/og-image.png') }}">
+    <meta property="og:url" content="{{ request.url }}">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{% block twitter_title %}Your Site Title{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}Create and download customizable social media templates quickly and easily.{% endblock %}">
+    <meta name="twitter:image" content="{{ url_for('static', filename='images/twitter-card.png') }}">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ request.url }}">
+
+    <!-- Page Title -->
+    <title>{% block title %}Your Site Title{% endblock %}</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  </head>
+  <body x-data="{ open: false }">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container">
+        <a class="navbar-brand" href="{{ url_for('index') }}">BrandName</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('index') }}">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('contact') }}">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="py-5 bg-primary text-white">
+      <div class="container">
+        <h1 class="display-4">{% block header_title %}Welcome to BrandName{% endblock %}</h1>
+        <p class="lead">{% block header_subtitle %}Your one-stop solution for creating and downloading social media templates{% endblock %}</p>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container my-5">
+      {% block content %}
+      <!-- Child templates should override this block with page-specific content -->
+      {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6">
+            <p>&copy; {{ current_year }} BrandName. All rights reserved.</p>
+          </div>
+          <div class="col-md-6 text-md-end">
+            <a href="{{ url_for('privacy') }}" class="text-white me-3">Privacy Policy</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Add Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <!-- Alpine.js -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+    <!-- html2canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+  </body>
+</html>

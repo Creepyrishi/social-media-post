@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Social Media Templates{% endblock %}
+
+{% block header_title %}Choose Your Social Media Template{% endblock %}
+{% block header_subtitle %}Select a platform below to start customizing your template.{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+  <div class="row row-cols-1 row-cols-md-3 g-4">
+    <!-- Twitter Template Card -->
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <img src="{{ url_for('static', filename='images/twitter.png') }}" class="card-img-top" alt="Twitter Template">
+        <div class="card-body">
+          <h5 class="card-title">Twitter Template</h5>
+          <p class="card-text">Customize and download your perfect Twitter post template.</p>
+          <a href="{{ url_for('twitter_template') }}" class="btn btn-primary">Customize</a>
+        </div>
+      </div>
+    </div>
+    <!-- Instagram Template Card -->
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <img src="{{ url_for('static', filename='images/instagram.png') }}" class="card-img-top" alt="Instagram Template">
+        <div class="card-body">
+          <h5 class="card-title">Instagram Template</h5>
+          <p class="card-text">Design stunning Instagram posts with our customizable template.</p>
+          <a href="{{ url_for('instagram_template') }}" class="btn btn-primary">Customize</a>
+        </div>
+      </div>
+    </div>
+    <!-- Facebook Template Card -->
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <img src="{{ url_for('static', filename='images/facebook.png') }}" class="card-img-top" alt="Facebook Template">
+        <div class="card-body">
+          <h5 class="card-title">Facebook Template</h5>
+          <p class="card-text">Craft eye-catching Facebook posts using our intuitive tools.</p>
+          <a href="{{ url_for('facebook_template') }}" class="btn btn-primary">Customize</a>
+        </div>
+      </div>
+    </div>
+    <!-- YouTube Template Card -->
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <img src="{{ url_for('static', filename='images/youtube.png') }}" class="card-img-top" alt="YouTube Template">
+        <div class="card-body">
+          <h5 class="card-title">YouTube Template</h5>
+          <p class="card-text">Enhance your channel with our creative YouTube thumbnail templates.</p>
+          <a href="{{ url_for('youtube_template') }}" class="btn btn-primary">Customize</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

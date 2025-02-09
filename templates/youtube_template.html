@@ -1,0 +1,344 @@
+{% extends "base.html" %}
+
+{% block title %}YouTube Template - Social Media Templates{% endblock %}
+
+{% block header_title %}Customize Your YouTube Thumbnail{% endblock %}
+{% block header_subtitle %}Create engaging YouTube thumbnails by customizing each element{% endblock %}
+
+{% block content %}
+<div class="container" x-data="{
+  title: 'Your Video Title Here',
+  channelName: 'MrBeast',
+  views: '1.2M',
+  uploadTime: '2 days ago',
+  thumbnailImage: '{{ url_for('static', filename='images/best_thumbnail.jpg') }}',
+  profileImage: '{{ url_for('static', filename='images/mr_beast_logo.png') }}',
+  imageScale: 1,
+  imageX: 0,
+  imageY: 0,
+  darkMode: false,
+  verified: true,
+  previewWidth: 600,
+  showControls: true
+}">
+  <div class="row">
+    <!-- Controls Panel -->
+    <div class="col-md-4">
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Customize Your Thumbnail</h5>
+
+          <!-- Text Content -->
+          <div class="mb-3">
+            <label class="form-label">Video Title</label>
+            <textarea class="form-control" rows="2" x-model="title"></textarea>
+          </div>
+
+          <!-- Channel Details -->
+          <div class="mb-3">
+            <label class="form-label">Channel Name</label>
+            <input type="text" class="form-control" x-model="channelName">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Views</label>
+            <input type="text" class="form-control" x-model="views">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Upload Time</label>
+            <input type="text" class="form-control" x-model="uploadTime">
+          </div>
+
+          <!-- Image Uploads -->
+          <div class="mb-3">
+            <label class="form-label">Thumbnail Image</label>
+            <div class="d-flex gap-2">
+              <input type="file" class="form-control" @change="thumbnailImage = URL.createObjectURL($event.target.files[0]); imageScale = 1; imageX = 0; imageY = 0;">
+              <button class="btn btn-danger" @click="thumbnailImage = '{{ url_for('static', filename='images/best_thumbnail.jpg') }}'" x-show="thumbnailImage !== '{{ url_for('static', filename='images/best_thumbnail.jpg') }}'">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Channel Icon</label>
+            <div class="d-flex gap-2">
+              <input type="file" class="form-control" @change="profileImage = URL.createObjectURL($event.target.files[0])">
+              <button class="btn btn-danger" @click="profileImage = '{{ url_for('static', filename='images/mr_beast_logo.png') }}'" x-show="profileImage !== '{{ url_for('static', filename='images/mr_beast_logo.png') }}'">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Theme Toggle -->
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" x-model="darkMode">
+            <label class="form-check-label">Dark Mode</label>
+          </div>
+
+          <!-- Verified Toggle -->
+          <div class="form-check form-switch mt-2">
+            <input class="form-check-input" type="checkbox" x-model="verified">
+            <label class="form-check-label">Verified Channel</label>
+          </div>
+
+          <!-- Show Controls Toggle -->
+          <div class="form-check form-switch mt-2">
+            <input class="form-check-input" type="checkbox" x-model="showControls">
+            <label class="form-check-label">Show Video Controls</label>
+          </div>
+
+          <!-- Download Buttons -->
+          <div class="mt-4">
+            <h6>Download Options</h6>
+            <div class="d-grid gap-2">
+              <button class="btn btn-outline-secondary position-relative" 
+                      onclick="downloadThumbnail('preview')">
+                <i class="fas fa-download me-2"></i>Download Preview Size
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success" style="font-size: 0.7em;">
+                  Recommended
+                  <span class="visually-hidden">recommended option</span>
+                </span>
+              </button>
+              <button class="btn btn-outline-primary" 
+                      onclick="downloadThumbnail('ultra')">
+                <i class="fas fa-download me-2"></i>Download Ultra Quality
+              </button>
+              <button class="btn btn-primary" 
+                      onclick="downloadThumbnail('high')">
+                <i class="fas fa-download me-2"></i>Download YouTube Size
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preview Panel -->
+    <div class="col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Preview</h5>
+          
+          <!-- YouTube Video Preview -->
+          <div class="youtube-video-preview" 
+               :class="{ 'dark-mode': darkMode }"
+               :style="{ 'width': previewWidth + 'px' }">
+            <!-- Video Thumbnail -->
+            <div class="video-thumbnail position-relative">
+              <img :src="thumbnailImage" 
+                   class="img-fluid w-100" 
+                   alt="Video thumbnail">
+              <!-- Video Controls Overlay -->
+              <div class="video-controls-overlay" x-show="showControls">
+                <div class="play-button">
+                  <i class="fas fa-play"></i>
+                </div>
+                <div class="video-progress">
+                  <div class="progress-bar"></div>
+                </div>
+                <div class="bottom-controls">
+                  <div class="left-controls">
+                    <button class="control-btn"><i class="fas fa-play"></i></button>
+                    <button class="control-btn"><i class="fas fa-volume-up"></i></button>
+                    <span class="time-display">0:00 / 10:30</span>
+                  </div>
+                  <div class="right-controls">
+                    <button class="control-btn"><i class="fas fa-closed-captioning"></i></button>
+                    <button class="control-btn"><i class="fas fa-cog"></i></button>
+                    <button class="control-btn"><i class="fas fa-expand"></i></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Video Info -->
+            <div class="video-info d-flex p-3">
+              <div class="channel-icon me-3">
+                <img :src="profileImage" 
+                     class="rounded-circle" 
+                     width="48" 
+                     height="48" 
+                     alt="Channel icon">
+              </div>
+              <div class="video-details flex-grow-1">
+                <h6 class="video-title mb-2" x-text="title"></h6>
+                <div class="channel-info mb-1">
+                  <div class="channel-name d-flex align-items-center mb-1">
+                    <span x-text="channelName" class="fw-bold"></span>
+                    <i class="fas fa-check-circle ms-1 text-secondary" x-show="verified"></i>
+                  </div>
+                  <div class="video-stats">
+                    <span x-text="views + ' views'"></span> • 
+                    <span x-text="uploadTime"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.youtube-video-preview {
+  background: var(--bs-white);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  margin: 0 auto;
+  overflow: hidden;
+  height: auto;
+}
+
+.youtube-video-preview.dark-mode {
+  background: #0F0F0F;
+  color: var(--bs-white);
+}
+
+.video-thumbnail {
+  position: relative;
+  background: #000;
+}
+
+.video-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.video-controls-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.play-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 3rem;
+  cursor: pointer;
+}
+
+.video-progress {
+  height: 3px;
+  background: rgba(255, 255, 255, 0.3);
+  position: absolute;
+  bottom: 40px;
+  left: 0;
+  right: 0;
+}
+
+.progress-bar {
+  width: 30%;
+  height: 100%;
+  background: red;
+}
+
+.bottom-controls {
+  padding: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  color: white;
+}
+
+.control-btn {
+  background: none;
+  border: none;
+  color: white;
+  padding: 0 8px;
+  cursor: pointer;
+}
+
+.time-display {
+  font-size: 0.8rem;
+  margin: 0 8px;
+}
+
+.video-duration {
+  border-radius: 4px;
+  font-size: 0.8rem;
+  z-index: 2;
+}
+
+.channel-icon img {
+  object-fit: cover;
+}
+
+.video-title {
+  font-size: 1.1rem;
+  line-height: 1.4;
+  margin-bottom: 4px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.channel-name {
+  font-size: 0.95rem;
+  color: var(--bs-gray-700);
+}
+
+.dark-mode .channel-name {
+  color: var(--bs-gray-300);
+}
+
+.video-stats {
+  font-size: 0.9rem;
+  color: var(--bs-gray-600);
+}
+
+.dark-mode .video-stats {
+  color: var(--bs-gray-400);
+}
+</style>
+
+<script>
+function downloadThumbnail(quality) {
+  const previewElement = document.querySelector('.youtube-video-preview');
+  
+  html2canvas(previewElement, {
+    useCORS: true,
+    allowTaint: true,
+    backgroundColor: null
+  }).then(canvas => {
+    const qualitySettings = {
+      preview: { width: 1280, format: 'jpg' },
+      high: { width: 1920, format: 'png' },
+      ultra: { width: 3840, format: 'png' }
+    };
+    
+    const settings = qualitySettings[quality];
+    
+    const scaledCanvas = document.createElement('canvas');
+    const ctx = scaledCanvas.getContext('2d');
+    const scaleFactor = settings.width / canvas.width;
+    scaledCanvas.width = settings.width;
+    scaledCanvas.height = canvas.height * scaleFactor;
+    ctx.drawImage(canvas, 0, 0, scaledCanvas.width, scaledCanvas.height);
+    
+    const link = document.createElement('a');
+    link.download = `youtube-thumbnail.${settings.format}`;
+    link.href = scaledCanvas.toDataURL(`image/${settings.format}`, 1.0);
+    link.click();
+  });
+}
+</script>
+{% endblock %}
